@@ -34,7 +34,7 @@ def monitor():
         level = logging.DEBUG
     logging.basicConfig(
         format='%(asctime)s [%(levelname)s] %(message)s', filename=log_file, level=level)
-    logging.info('Monitoring...')
+    logging.debug('Monitoring...')
     pastebin_thread = threading.Thread(
         target=Pastebin().monitor, args=[])
     slexy_thread = threading.Thread(

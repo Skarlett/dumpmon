@@ -72,10 +72,19 @@ class Site(object):
             while not self.empty():
                 paste = self.get()
                 self.ref_id = paste.id
-                logging.info('[*] Checking ' + paste.url)
+                logging.debug('[*] Checking ' + paste.url)
                 paste.text = self.get_paste_text(paste)
-                tweet = helper.build_tweet(paste)
-                logging.info(tweet)
+                logging.info({
+                        'pid' : paste.id,
+                        'text' : paste.text,
+                        'emails' : paste.emails,
+                        'hashes' : paste.hashes,
+                        'num_emails' : paste.num_emails,
+                        'num_hashes' : paste.num_hashes,
+                        'type' : paste.type,
+                        'db_keywords' : paste.db_keywords,
+                        'url' : paste.url
+                       })
                 if USE_DB:
                     self.db_client.save({
                         'pid' : paste.id,

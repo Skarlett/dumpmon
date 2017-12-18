@@ -28,14 +28,14 @@ class Pastebin(Site):
 
     def update(self):
         '''update(self) - Fill Queue with new Pastebin IDs'''
-        logging.info('Retrieving Pastebin ID\'s')
+        logging.debug('Retrieving Pastebin ID\'s')
         new_pastes = []
         raw = None
         while not raw:
             try:
                 raw = self.session.get(self.BASE_URL + '/archive').text
             except:
-                logging.info('Error with pastebin')
+                logging.error('Error with pastebin')
                 raw = None
                 sleep(5)
         results = BeautifulSoup(raw).find_all(
@@ -49,7 +49,7 @@ class Pastebin(Site):
                 break
             new_pastes.append(paste)
         for entry in new_pastes[::-1]:
-            logging.info('Adding URL: ' + entry.url)
+            logging.debug('Adding URL: ' + entry.url)
             self.put(entry)
     def get_paste_text(self, paste):
         return helper.download(paste.url)
