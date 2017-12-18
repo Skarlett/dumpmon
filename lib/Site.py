@@ -4,7 +4,6 @@ import time
 import re
 from pymongo import MongoClient
 from requests import ConnectionError
-from twitter import TwitterError
 from settings import USE_DB, DB_HOST, DB_PORT
 import logging
 import helper
@@ -67,7 +66,7 @@ class Site(object):
     def list(self):
         print('\n'.join(url for url in self.queue))
 
-    def monitor(self, bot, t_lock):
+    def monitor(self):
         self.update()
         while(1):
             while not self.empty():
@@ -76,25 +75,19 @@ class Site(object):
                 logging.info('[*] Checking ' + paste.url)
                 paste.text = self.get_paste_text(paste)
                 tweet = helper.build_tweet(paste)
-                if tweet:
-                    logging.info(tweet)
-                    with t_lock:
-                        if USE_DB:
-                            self.db_client.save({
-                                'pid' : paste.id,
-                                'text' : paste.text,
-                                'emails' : paste.emails,
-                                'hashes' : paste.hashes,
-                                'num_emails' : paste.num_emails,
-                                'num_hashes' : paste.num_hashes,
-                                'type' : paste.type,
-                                'db_keywords' : paste.db_keywords,
-                                'url' : paste.url
-                               })
-                        try:
-                            bot.statuses.update(status=tweet)
-                        except TwitterError:
-                            pass
+                logging.info(tweet)
+                if USE_DB:
+                    self.db_client.save({
+                        'pid' : paste.id,
+                        'text' : paste.text,
+                        'emails' : paste.emails,
+                        'hashes' : paste.hashes,
+                        'num_emails' : paste.num_emails,
+                        'num_hashes' : paste.num_hashes,
+                        'type' : paste.type,
+                        'db_keywords' : paste.db_keywords,
+                        'url' : paste.url
+                       })
             self.update()
             while self.empty():
                 logging.debug('[*] No results... sleeping')
