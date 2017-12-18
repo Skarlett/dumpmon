@@ -1,3 +1,4 @@
+import json
 from Queue import Queue
 import requests
 import time
@@ -74,7 +75,7 @@ class Site(object):
                 self.ref_id = paste.id
                 logging.debug('[*] Checking ' + paste.url)
                 paste.text = self.get_paste_text(paste)
-                logging.info({
+                logging.info(json.dumps({
                         'pid' : paste.id,
                         'text' : paste.text,
                         'emails' : paste.emails,
@@ -84,7 +85,7 @@ class Site(object):
                         'type' : paste.type,
                         'db_keywords' : paste.db_keywords,
                         'url' : paste.url
-                       })
+                       }))
                 if USE_DB:
                     self.db_client.save({
                         'pid' : paste.id,
